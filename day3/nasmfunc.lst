@@ -1,0 +1,5 @@
+     1                                  GLOBAL  io_hlt
+     2                                  
+     3                                  io_hlt:
+     4 00000000 F4                          HLT
+     5 00000001 C3                          RET
