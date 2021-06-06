@@ -78,13 +78,13 @@ io_store_eflags:
     RET
 
 load_gdtr:  
-    MOV ax, [ESP + 4]
-    MOV [esp + 6], ax
+    MOV AX, [ESP + 4]
+    MOV [ESP + 6], AX
     LGDT    [ESP + 6]
     RET
 
 load_idtr:
-    MOV AX, [ESP + 4]   ; limit
+    MOV AX, [ESP + 4]
     MOV [ESP + 6], AX
     LIDT    [ESP + 6]
     RET
