@@ -6,6 +6,7 @@ int io_load_eflags(void);
 void io_store_eflags(int flags);
 void init_palette(void);
 void set_palette(int start, int end, unsigned char *rgb);
+extern void sprintf(char *str, char *fmt, ...);
 
 #define COL8_000000 0
 #define COL8_FF0000 1
@@ -31,33 +32,23 @@ struct BOOTINFO
     char *vram;
 };
 
-
 void HariMain(void)
 {
     int i; /*iは32ビットの整数型*/
     char* vram; /*pは、BYTE[...]用の番地*/
     int xsize,ysize;
     struct BOOTINFO *binfo;
-
-    static char font[16]={
-        0x00,0x18,0x18,0x18,0x18,0x24,0x24,0x24,
-        0x24,0x7e,0x42,0x42,0x42,0xe7,0x00,0x00
-    };
-
-    /* 縞々模様を描画する
-    for(i = 0xa0000; i<= 0xaffff; i++){
-        p = (char*)i;
-        *p = i & 0x0f;
-    }*/
+    binfo = (struct BOOTINFO *)0x0ff0;
+    extern char hankaku[4096];
 
     init_palette();
-
-    binfo = (struct BOOTINFO *)0x0ff0;
-
     init_screen(binfo->vram,binfo->scrnx,binfo->scrny);
 
-    putfont8(binfo->vram,binfo->scrnx,10,10,COL8_FFFFFF,font);
- 
+    char s[40];
+    sprintf(s,"scrnx=%d",binfo->scrnx);
+
+    putfont8_asc(binfo->vram,binfo->scrnx,30,30,COL8_FFFFFF,s);
+
     for(;;){
         io_hlt();
     }
@@ -149,6 +140,16 @@ void putfont8(char *vram,int xsize,int x,int y,char c,char *font)
         if((d&0x04)!=0){p[5]=c;}
         if((d&0x02)!=0){p[6]=c;}
         if((d&0x01)!=0){p[7]=c;}
+    }
+    return;
+}
+
+void putfont8_asc(char *vram,int xsize,int x,int y, char color, unsigned char *s)
+{
+    extern char hankaku[4096];
+    for(; *s!=0x00;s++){
+        putfont8(vram,xsize,x,y,color,hankaku+*s*16);
+        x+=8;
     }
     return;
 }

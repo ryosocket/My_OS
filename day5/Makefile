@@ -8,10 +8,17 @@ nasmfunc.o: nasmfunc.asm
 	nasm -f elf32 -o nasmfunc.o nasmfunc.asm
 
 bootpack.o: bootpack.c
-	gcc -c -m32 -fno-pic -o bootpack.o bootpack.c
+	gcc -c -m32 -fno-pic -o  bootpack.o bootpack.c
 
-bootpack.bin: bootpack.o nasmfunc.o
-	ld -m elf_i386 -e HariMain -o bootpack.bin -Tos.ls bootpack.o nasmfunc.o
+hankaku.o: hankaku.c
+	gcc -c -m32 -fno-pic -o  hankaku.o hankaku.c
+
+mysprintf.o: mysprintf.c
+	gcc -c -m32 -fno-pic -nostdlib -o mysprintf.o mysprintf.c
+
+bootpack.bin: os.ls bootpack.o nasmfunc.o hankaku.o mysprintf.o 
+	# gcc -m32 -fno-pic -o -nostdlib -nostdinc -T os.ls bootpack.o hankaku.o sprintf.o nasmfunc.o 
+	ld -m elf_i386 -e HariMain -o bootpack.bin -T os.ls bootpack.o hankaku.o mysprintf.o nasmfunc.o 
 
 os.sys: nasmhead.bin bootpack.bin
 	cat nasmhead.bin bootpack.bin > os.sys
