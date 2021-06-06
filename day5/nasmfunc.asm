@@ -5,6 +5,7 @@ global  io_cli,io_sti,io_stihlt
 global  io_in8,io_in16,io_in32
 global  io_out8,io_out16,io_out32
 global  io_load_eflags,io_store_eflags
+global  load_gdtr,load_idtr
 
 section .text
 io_hlt:
@@ -76,4 +77,14 @@ io_store_eflags:
     POPFD
     RET
 
+load_gdtr:  
+    MOV ax, [ESP + 4]
+    MOV [esp + 6], ax
+    LGDT    [ESP + 6]
+    RET
 
+load_idtr:
+    MOV AX, [ESP + 4]   ; limit
+    MOV [ESP + 6], AX
+    LIDT    [ESP + 6]
+    RET
